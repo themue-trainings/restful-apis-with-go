@@ -1,0 +1,41 @@
+baseURL = "/"
+languageCode = "en-us"
+title = "RESTful APIs with Go"
+themesDir = "themes"
+theme = "themue-trainings"
+
+pygmentsCodeFences = true
+pygmentsCodefencesGuessSyntax = true
+pygmentsUseClasses = true
+
+[module]
+  [module.hugoVersion]
+    extended = true
+    min = "0.55.0"
+
+summaryLength = 0
+
+[[menu.main]]
+    name = "Home"
+    url = "/"
+    weight = 1
+
+[[menu.main]]
+    name = "Sections"
+    url = "/sections/"
+    weight = 2
+
+[params]
+  google_analytics_id=""
+  homepage_button_link = '/sections'
+  homepage_button_text = 'Sections'
+  homepage_intro = 'RESTful APIs with Go shows the easy extension of the Go standard library for own APIs.'
+  homepage_image = ''
+
+  [params.homepage_meta_tags]
+    meta_description = "RESTful APIs with Go."
+    meta_twitter_creator = "@themue"
+
+  [params.logo]
+      mobile = "/images/themue-trainings.jpg"
+      standard  = "/images/themue-trainings.jpg"

@@ -1,0 +1,9 @@
+name = "themue-trainings"
+license = "BSD"
+
+tags = ["docs","responsive","minimal","clean","bootstrap","themue"]
+features = ["docs","bootstrap","scss","netlify"]
+
+[author]
+  name = "Frank Müller"
+  homepage = "https://themue.dev"
