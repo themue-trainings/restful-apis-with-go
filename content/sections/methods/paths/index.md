@@ -95,3 +95,7 @@ func PathToResources(r *http.Request, prefix string) Resources {
     return ress
 }
 ```
+
+## Links
+
+* File [uri.go](https://github.com/tideland/go-httpx/blob/main/uri.go) of Tideland Go HTTPX

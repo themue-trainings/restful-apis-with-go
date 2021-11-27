@@ -25,8 +25,8 @@ weight: 34
 ## Go and JSON
 
 * Go supports JSON encoding and decoding using the `encoding/json` package
-* Data structures to be encoded and decoded must contain exported fields and annotations
-* The annotations are used to specify the JSON tag name and the marshalling of empty objects
+* Data structures to be encoded and decoded must contain exported fields
+* Names and behavior in case of empty values are defined by the `json` struct tags
 
 ```go
 type Person struct {
@@ -62,8 +62,8 @@ if err != nil {
 
 // Write the JSON.
 w.Header().Set("Content-Type", "application/json")
-w.Write(jsonPerson)
 w.WriteHeader(http.StatusOK)
+w.Write(jsonPerson)
 ```
 
 ### Unmarshalling
@@ -91,3 +91,7 @@ if err != nil {
 // Continue with the request.
 ...
 ``` 
+
+## Links
+
+* Package [encoding/json](https://golang.org/pkg/encoding/json/)

@@ -1,19 +1,19 @@
 ---
 title: 'Motivation'
 summary: 'Why not using one of the existing libraries for RESTful APIs?'
-date: 2021-11-21T12:00:00+1:00
+date: 2021-11-26T12:00:00+1:00
 draft: false
 weight: 14
 ---
 
 ## Existing libraries
 
-* Several libraries are already available for RESTful APIs:
+* Several libraries are already available for RESTful APIs
     * [Gin Web Framework](https://gin-gonic.com)
     * [chi](https://go-chi.io/#/)
     * [Gorilla web toolkit](https://www.gorillatoolkit.org)
     * And more ...
-* But using one of these libraries is not always the best choice
+* But using one of these libraries may not be the best choice
     * Some are to complex to use
     * Some contain too many dependencies
     * Some are not well documented

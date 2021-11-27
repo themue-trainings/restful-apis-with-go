@@ -112,3 +112,7 @@ func WriteBody(w http.ResponseWriter, contentType string, v interface{}) error {
     return nil
 }
 ```
+
+## Links
+
+* File [body.go](https://github.com/tideland/go-httpx/blob/main/body.go) of Tideland Go HTTPX

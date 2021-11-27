@@ -1,7 +1,7 @@
 ---
 title: 'Analyzing Web Requests'
 summary: 'Using http.Request and the related types for the analysis of web requests.'
-date: 2021-11-21T12:00:00+1:00
+date: 2021-11-26T12:00:00+1:00
 draft: false
 weight: 22
 ---
@@ -50,10 +50,13 @@ weight: 22
 func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
     switch r.Method {
     case http.MethodGet:
+        // Handle GET requests in a private method.
         h.handleGet(w, r)
     case http.MethodPost:
+        // Handle POST requests in a private method.
         h.handlePost(w, r)
     default:
+        // All other HTTP methods are not allowed.
         http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
     }
 }
@@ -89,3 +92,12 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
     ...
 }
 ```
+
+## Links
+
+* Type [handler.Request](https://pkg.go.dev/net/http#Request)
+* Type [http.Header](https://pkg.go.dev/net/http#Header)
+* Type [url.URL](https://pkg.go.dev/net/url#URL)
+* Type [url.Values](https://pkg.go.dev/net/url#Values)
+* Type [multipart.Form](https://pkg.go.dev/mime/multipart#Form)
+

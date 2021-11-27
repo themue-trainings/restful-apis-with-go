@@ -10,6 +10,8 @@ weight: 36
 
 * The cache server will be changed into a JSON document cache server
 * Each entry contains an ID and a raw content
+* The raw content is a JSON document itself
+* Here Go provides the type `json.RawMessage`
 
 ## Example
 
@@ -19,6 +21,7 @@ weight: 36
 package jsoncache
 
 import (
+    "encoding/json"
     "net/http"
     "sync"
 

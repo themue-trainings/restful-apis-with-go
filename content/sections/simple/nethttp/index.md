@@ -1,7 +1,7 @@
 ---
 title: 'The net/http package'
 summary: 'An introduction into the net/http package of the Go standard library.'
-date: 2021-11-21T12:00:00+1:00
+date: 2021-11-26T12:00:00+1:00
 draft: false
 weight: 21
 ---
@@ -34,8 +34,8 @@ func (f HandlerFunc) ServeHTTP(w ResponseWriter, r *Request) {
 * The function `http.ListenAndServe` starts an HTTP server on the given address
 
 ```go
-func ListenAndServe(addr string, handler Handler) error 
-``` 
+func ListenAndServe(addr string, handler Handler) error
+```
 
 * Additionally the variant `http.ListenAndServeTLS` starts an HTTPS server on the given address
 
@@ -65,4 +65,13 @@ func main() {
 
     log.Fatal(err)
 }
-``` 
+```
+
+## Links
+
+* Type [handler.Handler](https://pkg.go.dev/net/http#Handler)
+* Type [handler.HandlerFunc](https://pkg.go.dev/net/http#HandlerFunc)
+* Function [handler.ListenAndServe](https://pkg.go.dev/net/http#ListenAndServe)
+* Function [handler.ListenAndServeTLS](https://pkg.go.dev/net/http#ListenAndServeTLS)
+* Type [handler.Server](https://pkg.go.dev/net/http#Server)
+

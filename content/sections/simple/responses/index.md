@@ -1,7 +1,7 @@
 ---
 title: 'Producing Web Responses'
 summary: 'Answer web requests with the http.ResponseWriter.'
-date: 2021-11-21T12:00:00+1:00
+date: 2021-11-26T12:00:00+1:00
 draft: false
 weight: 23
 ---
@@ -15,6 +15,7 @@ weight: 23
     * `Header()`: returns the header map and allows you to set the response header
     * `WriteHeader(int)`: sets the response status code
     * `Write([]byte) (int, error)`: writes the response body
+* `Header()` and `WriteHeader()` have to be called before writing the body
 * The method `Write()` ensures that the response also implements the `io.Writer` interface
 * So all functions and methods working with `io.Writer` can also be used writing to the `http.ResponseWriter`
 
@@ -41,3 +42,8 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
     fmt.Fprintf(w, "Your Accept header is: %s", accept)
 }
 ```
+
+## Links
+
+* Type [http.ResponseWriter](https://pkg.go.dev/net/http#ResponseWriter)
+

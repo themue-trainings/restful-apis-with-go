@@ -1,7 +1,7 @@
 ---
 title: 'Example with Standard Types'
 summary: 'A little example showing the development and usage of an own handler.'
-date: 2021-11-21T12:00:00+1:00
+date: 2021-11-26T12:00:00+1:00
 draft: false
 weight: 24
 ---
@@ -10,6 +10,7 @@ weight: 24
 
 * In-memory Cache Server to store named byte sequences
 * HTTP Server to serve the cache
+* Memory and load are note handled, also no content types
 
 ## Example
 
@@ -44,7 +45,7 @@ func NewHandler() *Handler {
 // private helper methods.
 func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
     // Map HTTP methods to individual methods.
-    switch r.Method { 
+    switch r.Method {
     case http.MethodGet:
         h.handleGet(w, r)
     case http.MethodPost:
@@ -71,7 +72,8 @@ func (h *Handler) handleGet(w http.ResponseWriter, r *http.Request) {
     w.Write(data)
 }
 
-// handlePost handles POST requests. It does not matter if the path is known.
+// handlePost handles POST requests. It does not matter if the path is known,
+// content will be replaced.
 func (h *Handler) handlePost(w http.ResponseWriter, r *http.Request) {
     h.mu.Lock()
     defer h.mu.Unlock()
@@ -104,3 +106,4 @@ func main() {
     }
 }
 ```
+

@@ -1,7 +1,7 @@
 ---
 title: 'HTTP Methods are Verbs'
 summary: 'Introduction into HTTP methods and how to more easy handle them.'
-date: 2021-11-21T12:00:00+1:00
+date: 2021-11-26T12:00:00+1:00
 draft: false
 weight: 31
 ---
@@ -9,17 +9,17 @@ weight: 31
 ## Handling HTTP methods
 
 * HTTP methods are verbs, and are used to indicate the type of action that the client is requesting
-* In RESTful APIs are used to indicate the type of action to be performed on a resource
-* So a typical task of the code is to analyse the methods and decide what to do
+* In RESTful APIs they are are used to indicate the action to be performed on a resource
+* So a typical task of the code is to analyse the method and decide what to do
 * We've seen how to use a `switch` statement to check the method and act accordingly
 
 ```go
 switch r.Method {
 case http.MethodGet:
-    // Handle GET.
+    // Handle GET requests in a private method.
     h.handleGet(w, r)
 case http.MethodPost:
-    // Handle POST.
+    // Handle POST requests in a private method.
     h.handlePost(w, r)
 default:
     // Handle other methods or return error.
@@ -36,7 +36,7 @@ default:
 ```go
 // Package httpx contains helper functions for the daily work with HTTP.
 package httpx
-``` 
+```
 
 * Use the power of interfaces to distribute HTTP methods
 * Create our method wrapper in `pkg/httpx/methods.go`
@@ -92,40 +92,32 @@ func NewMethodHandler(h http.Handler) *MethodHandler {
 
 // ServeHTTP implements the http.Handler interface.
 func (h *MethodHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-    badRequest := func() {
-        errtxt := http.StatusText(http.StatusBadRequest) + ": " + r.Method
-        http.Error(w, errtxt, http.StatusBadRequest)
-    }
     switch r.Method {
     case http.MethodGet:
         if hh, ok := h.handler.(GetHandler); ok {
             hh.ServeHTTPGet(w, r)
             return
         }
-        badRequest()
     case http.MethodPost:
         if hh, ok := h.handler.(PostHandler); ok {
             hh.ServeHTTPPost(w, r)
             return
         }
-        badRequest()
      case http.MethodPut:
         if hh, ok := h.handler.(PutHandler); ok {
             hh.ServeHTTPPut(w, r)
             return
         }
-        badRequest()
     case http.MethodDelete:
         if hh, ok := h.handler.(DeleteHandler); ok {
             hh.ServeHTTPDelete(w, r)
             return
         }
-        badRequest()
     // ...
-    default:
-        // Fall back to default for any other method.
-        h.handler.ServeHTTP(w, r)
     }
+    // Fall back to default for no matching handler method or any
+    // other HTTP method.
+    h.handler.ServeHTTP(w, r)
 }
 ```
 
@@ -203,11 +195,16 @@ import (
 
 // main runs the cache server.
 func main() {
-    h := httpx.NewMethodHandler(cache.NewHandler()) // Use the method handler as wrapper.
-    err := http.ListenAndServe(":8080", h)
+    h := cache..NewHandler()
+    mh := httpx.NewMethodHandler(h) // Use the method handler as wrapper.
+    err := http.ListenAndServe(":8080", mh)
 
     if err != nil {
         log.Fatal(err)
     }
 }
 ```
+
+## Links
+
+* File [methods.go](https://github.com/tideland/go-httpx/blob/main/methods.go) of Tideland Go HTTPX
