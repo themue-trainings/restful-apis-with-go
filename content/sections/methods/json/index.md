@@ -94,4 +94,4 @@ if err != nil {
 
 ## Links
 
-* Package [encoding/json](https://golang.org/pkg/encoding/json/)
+* Package [encoding/json](https://pkg.go.dev/encoding/json)

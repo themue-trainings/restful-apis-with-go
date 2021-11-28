@@ -61,3 +61,7 @@ func (mux *NestedMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
     h.ServeHTTP(w, r)
 }
 ```
+
+## Links
+
+* File [nesting.go](https://github.com/tideland/go-httpx/blob/main/nesting.go) of Tideland Go HTTPX

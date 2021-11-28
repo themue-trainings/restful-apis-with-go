@@ -67,6 +67,18 @@ func (ress Resources) IsPath(path string) bool {
     return ress.Path() == path
 }
 
+// PathID first checks if the resources path matches a given path and
+// then returns the ID of that resource.
+func (ress Resources) PathID(path string) string {
+    names := strings.Split(path, "/")
+    for i, name := range names {
+        if ress[i].Name == name {
+            return ress[i].ID
+        }
+    }
+    return ""
+}
+
 // PathToResources parses a new Resource from a URI path.
 func PathToResources(r *http.Request, prefix string) Resources {
     // Remove prefix with and without trailing slash.

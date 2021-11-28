@@ -1,14 +1,14 @@
 ---
 title: 'Usage of nested Handlers'
 summary: 'An example on how to use the multiplexer of HTTPX for nesting.'
-date: 2021-11-21T12:00:00+1:00
+date: 2021-11-28T12:00:00+1:00
 draft: false
 weight: 43
 ---
 
 ## Idea
 
-* Register the RESTful API for users
+* Register a RESTful API for customers
 
 ## Example
 
@@ -24,22 +24,28 @@ import (
     "net/http"
 
     "./pkg/httpx"
-    "./pkg/users"
+    "./pkg/customers"
+)
+
+const (
+    // Prefix for API calls.
+    apiPrefix = "/api/v1"
 )
 
 func main() { 
     mux := http.NewServeMux()
-    apimux := httpx.NewNestedMux("/api/v1")
+    apimux := httpx.NewNestedMux(apiPrefix)
 
-    apimux.Handle("users", httpx.MethodWrapper(users.NewHandler()))
-    apimux.Handle("users/addresses", httpx.MethodWrapper(users.NewAddressesHandler()))
-    apimux.Handle("users/contracts", httpx.MethodWrapper(users.NewContractsHandler()))
+    apimux.Handle("customers", httpx.MethodWrapper(customers.NewHandler()))
+    apimux.Handle("customers/addresses", httpx.MethodWrapper(customers.NewAddressesHandler()))
+    apimux.Handle("customers/contracts", httpx.MethodWrapper(customers.NewContractsHandler()))
 
-    // Register further nested API handlers ...
+    // Register further nested API handlers, then
+    // let the multiplexer serve all API requests.
 
-    mux.Handle("/api/v1/", apimux)
+    mux.Handle(apiPrefix, apimux)
 
-    // Register further multiplexed handlers ...
+    // Register further multiplexed handlers, e.g. for static files.
 
     http.ListenAndServe(":8080", mux)
 }

@@ -1,7 +1,7 @@
 ---
 title: 'The Standard Multiplexer'
 summary: 'How requests are distibuted to different handlers with the Go standard library.'
-date: 2021-11-21T12:00:00+1:00
+date: 2021-11-28T12:00:00+1:00
 draft: false
 weight: 41
 ---
@@ -13,7 +13,7 @@ weight: 41
 * It calls the handler for the pattern that most closely matches the URL
 * For example, the pattern `/static/` matches all paths that begin with `/static/`
 * The pattern `/` matches all paths
-* It implements the `http.Handler` interface
+* It implements the `http.Handler` interface, so that it can be used as a handler
 
 ## Examples
 
@@ -68,3 +68,6 @@ func main() {
 }
 ``` 
 
+## Links
+
+* Type [http.ServeMux](https://pkg.go.dev/net/http#ServeMux)

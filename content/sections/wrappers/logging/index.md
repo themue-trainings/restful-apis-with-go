@@ -1,14 +1,14 @@
 ---
 title: 'Wrapper to log Requests'
 summary: 'Show the pattern of wrappers with an example for logging of web requests.'
-date: 2021-11-21T12:00:00+1:00
+date: 2021-11-28T12:00:00+1:00
 draft: false
 weight: 51
 ---
 
 ## Continue the idea of wrapping
 
-* The interface `http.Handler` allows to wrap any HTTP handler
+* The interface `http.Handler` allows to wrap any HTTP handler easily
 * This way it's ideal to separate functional and non-functional code
 * While our own handlers take care for the business logic wrappers like `httpx.MethodHandler` and `httpx.NestedMux` take care for the HTTP logic
 * This can be continued with other aspects of the application, like the logging
@@ -68,21 +68,31 @@ import (
     "./pkg/user"
 )
 
+const (
+    // Prefix for API calls.
+    apiPrefix = "/api/v1"
+)
+
 func main() { 
     mux := http.NewServeMux()
-    apimux := httpx.NewNestedMux("/api/v1")
+    apimux := httpx.NewNestedMux(apiPrefix)
     apilogger := httpx.NewLoggingHandler(log.New(os.Stdout, "api: ", log.LstdFlags), apimux)
 
     apimux.Handle("users", httpx.MethodWrapper(user.NewUsersHandler()))
     apimux.Handle("users/addresses", httpx.MethodWrapper(user.NewUsersAddressesHandler()))
     apimux.Handle("users/contracts", httpx.MethodWrapper(user.NewUsersContractsHandler()))
 
-    // Register further nested API handlers ...
+    // Register further nested API handlers, then
+    // let the multiplexer serve all API requests.
 
-    mux.Handle("/api/v1/", apilogger)
+    mux.Handle(apiPrefix, apilogger)
 
-    // Register further multiplexed handlers ...
+    // Register further multiplexed handlers, e.g. for static files.
 
     http.ListenAndServe(":8080", mux)
 }
 ```
+
+## Links
+
+* File [logging.go](https://github.com/tideland/go-httpx/blob/main/logging.go) of Tideland Go HTTPX

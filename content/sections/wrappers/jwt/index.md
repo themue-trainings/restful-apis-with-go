@@ -8,14 +8,14 @@ weight: 52
 
 ## JSON Web Token
 
-* The JSON Web Token (JWT) is a compact, self-contained, signed JSON object that represents a security token
+* The JSON Web Token (JWT) is a compact, self-contained, signed JSON object that represents a security token crafted by auth0
 * It is a base64 encoded string that contains a header, a payload and a signature
 * The header contains the type of token and the algorithm used to sign the token
 * The payload contains the claims of the token
 * The signature is used to verify the token
 * It is a standard way to authenticate and authorize users
 * The claims may contain an expiration date useful for session handling
-* Several implementations are available, like [Tideland Go JSON Web Token](https://pkg.go.dev/tideland.dev/go/jwt)
+* Several implementations are available, like the Tideland Go JSON Web Token](https://pkg.go.dev/tideland.dev/go/jwt)
 * Login and retrieving of right credentials has to be done via redirection to the authorization URL
 
 ## HTTPX
@@ -163,12 +163,20 @@ import (
     "./pkg/user"
 )
 
+const (
+    // Prefix for API calls.
+    apiPrefix = "/api/v1"
+
+    // Claim name for access.
+    accessClaim = "access"
+)
+
 func main() { 
     mux := http.NewServeMux()
-    apimux := httpx.NewNestedMux("/api/v1")
+    apimux := httpx.NewNestedMux(apiPrefix)
     apilogger := httpx.NewLoggingHandler(log.New(os.Stdout, "api: ", log.LstdFlags), apimux)
     gatekeeper := func(w http.ResponseWriter, r *http.Request, claims jwt.Claims) error {
-        access, ok := claims.GetString("access")
+        access, ok := claims.GetString(accessClaim)
         if !ok || access != "allowed" {
             return errors.New("access is not allowed")
         }
@@ -183,12 +191,19 @@ func main() {
     apimux.Handle("users/addresses", httpx.MethodWrapper(user.NewUsersAddressesHandler()))
     apimux.Handle("users/contracts", httpx.MethodWrapper(user.NewUsersContractsHandler()))
 
-    // Register further nested API handlers ...
+    // Register further nested API handlers, then
+    // let the multiplexer serve all API requests.
 
-    mux.Handle("/api/v1/", apijwt)
+    mux.Handle(apiPrefix, apijwt)
 
-    // Register further multiplexed handlers ...
+    // Register further multiplexed handlers, e.g. for static files.
 
     http.ListenAndServe(":8080", mux)
 }
 ```
+
+## Links
+
+* The [JWT](https://jwt.io) site
+* Package [Tideland Go JSON Web Token](https://pkg.go.dev/tideland.dev/go/jwt)
+* File [jwt.go](https://github.com/tideland/go-httpx/blob/main/jwt.go) of Tideland Go HTTPX

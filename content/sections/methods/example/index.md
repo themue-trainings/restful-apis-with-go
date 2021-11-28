@@ -28,26 +28,36 @@ import (
     "./pkg/httpx"
 )
 
-// JSONDoc describes one entry in the cache server.
-type JSONDoc struct {
+const (
+    // Prefix for API calls.
+    apiPrefix = apiPrefix
+
+    // Name of the jsoncache resource.
+    resourceName = "jsoncache"
+)
+
+// jsonDoc describes one entry in the cache server. It's a wrapper
+// containing the ID and the raw JSON document. It's the content of
+// the map.
+type jsonDoc struct {
     ID      string          `json:"id"`
     Content json.RawMessage `json:"content"`
 }
 
 // Handler provides a simple JSON in-memory cache server. Cache is 
-// done via a map of string to JSONDoc. The JSONDoc contains the ID and a
+// done via a map of string to jsonDoc. The jsonDoc contains the ID and a
 // raw content. The sync.RWMutex is used to ensure that the cache is
 // thread-safe.
 type Handler struct {
     mu    sync.RWMutex
-    cache map[string]JSONDoc
+    cache map[string]jsonDoc
 }
 
 // NewHandler creates the cache server. It's simply needed to create
-// the map of string to JSONDoc.
+// the map of string to jsonDoc.
 func NewHandler() *Handler {
     return &Handler{
-        cache: make(map[string]JSONDoc),
+        cache: make(map[string]jsonDoc),
     }
 }
 
@@ -56,17 +66,16 @@ func (h *Handler) ServeHTTPGet(w http.ResponseWriter, r *http.Request) {
     h.mu.RLock()
     defer h.mu.RUnlock()
 
-    rs := httpx.PathToResources(r, "/api/v1")
-    if rs == nil {
+    ress := httpx.PathToResources(r, apiPrefix)
+    if ress == nil {
         http.Error(w, "resource and ID are missing", http.StatusInvalidRequest)
         return
     }
-    if rs[0].Name != "json-cache" {
+    if !ress.IsPath(resourceName) {
         http.Error(w, "resource is not json-cache", http.StatusBadRequest)
         return
     }
-    id := rs[0].ID
-    doc, ok := h.cache[id]
+    doc, ok := h.cache[ress.PathID(resourceName)]
     if !ok {
         http.Error(w, "JSON document not found", http.StatusNotFound)
         return
@@ -82,16 +91,11 @@ func (h *Handler) ServeHTTPPost(w http.ResponseWriter, r *http.Request) {
     h.mu.Lock()
     defer h.mu.Unlock()
 
-    rs := httpx.PathToResources(r, "/api/v1")
-    if rs == nil {
-        http.Error(w, "resource is missing", http.StatusInvalidRequest)
+    if !httpx.PathToResources(apiPrefix).IsPath(resourceName) {
+        http.Error(w, "missing or bad resource", http.StatusBadRequest)
         return
     }
-    if rs[0].Name != "json-cache" {
-        http.Error(w, "resource is not json-cache", http.StatusBadRequest)
-        return
-    }
-    var doc JSONDoc
+    var doc jsonDoc
     err := httpx.ReadBody(r, &doc)
     if err != nil {
         http.Error(w, err.Error(), http.StatusBadRequest)
@@ -122,8 +126,9 @@ import (
 
 // main runs the cache server.
 func main() {
-    h := httpx.NewMethodHandler(jsoncache.NewHandler())
-    err := http.ListenAndServe(":8080", h)
+    h := jsoncache.NewHandler()
+    mh := httpx.NewMethodHandler(h)
+    err := http.ListenAndServe(":8080", mh)
 
     if err != nil {
         log.Fatal(err)
