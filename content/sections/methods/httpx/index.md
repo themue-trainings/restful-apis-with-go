@@ -34,7 +34,7 @@ const (
 // ReadBody reads and unmarshals the body of the request into the given interface. It
 // analyzes the content type and uses the appropriate unmarshaler. Here it handles
 // plain text, JSON, and XML. All other content types are returned directly as byte slice.
-func ReadBody(r http.Request, v interface{}) error {
+func ReadBody(r *http.Request, v interface{}) error {
     // Read content type and body.
     contentType := r.Header.Get(HeaderContentType)
     body, err := ioutil.ReadAll(r.Body)
