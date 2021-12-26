@@ -21,7 +21,7 @@ package gatekeeper
 import (
     "fmt"
     "net/http"
- 
+
     "tideland.dev/go/jwt"
 )
 
@@ -33,31 +33,21 @@ const (
     rightsClaim = "rights"
 )
 
-// Rights contains the allowed paths and their allowed HTTP methods.
-type Rights struct {
-    Paths map[string][]string `json:"paths"`
-}
-
-// Gatekeeper retrieves the claim "rights" and tests if the path and method are allowed.
-func Gatekeeper(w http.ResponseWriter, r *http.Request, claims jwt.Claims) error {
-    var rights Rights
-    ok, err := claims.GetMarshalled(rightsClaim, &rights)
-    if err != nil {
-        return fmt.Errorf("cannot unmarshal rights: %w", err)
-    }
-    if !ok {
-        return fmt.Errorf("no rights claim found")
-    }
-    ress := httpx.PathToResources(r, apiPrefix)
-    if ress == nil {
-        return fmt.Errorf("resource and ID are missing")
-    }
-    for _, method := range rights.Paths[ress.Path()] {
-        if method == r.Method {
-            // Method in path is found, so access allowd.
-            return nil
+// NewGatekeeper returns a gatekeeper using the given authorization backend.
+func NewGatekeeper(auth *Authorization) Gatekeeper func(w http.ResponseWriter, r *http.Request, claims jwt.Claims) error {
+    return func(w http.ResponseWriter, r *http.Request, claims jwt.Claims) error {
+        rights, ok := claims.GetString(rightsClaim)
+        if !ok {
+            return fmt.Errorf("no rights claim found")
         }
+        ress := httpx.PathToResources(r, apiPrefix)
+        if ress == nil {
+            return fmt.Errorf("resource and ID are missing")
+        }
+		if !auth.IsAllowed(r.Method, ress, rights) {
+            return fmt.Errorf("method %q and ressources %q are not allowed", r.Method, ress.Path())
+       	}
+        return nil
     }
-    return fmt.Errorf("path %q and method %q are not allowed", ress.Path(), r.Method)
 }
 ```
